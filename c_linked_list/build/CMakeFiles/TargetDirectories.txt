@@ -1,0 +1,3 @@
+/Volumes/data/4_github/crafting_interpreters/c_linked_list/build/CMakeFiles/rebuild_cache.dir
+/Volumes/data/4_github/crafting_interpreters/c_linked_list/build/CMakeFiles/edit_cache.dir
+/Volumes/data/4_github/crafting_interpreters/c_linked_list/build/CMakeFiles/DoublyLinkedLIst.dir
