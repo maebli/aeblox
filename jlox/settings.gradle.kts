@@ -11,4 +11,4 @@ plugins {
 }
 
 rootProject.name = "jlox"
-include("app", "list", "utilities")
+include("lox")
