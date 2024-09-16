@@ -18,6 +18,7 @@ import static io.github.maebli.lox.TokenType.LEFT_PARENTHESIS;
 import static io.github.maebli.lox.TokenType.LESS;
 import static io.github.maebli.lox.TokenType.LESS_EQUAL;
 import static io.github.maebli.lox.TokenType.MINUS;
+import static io.github.maebli.lox.TokenType.NUMBER;
 import static io.github.maebli.lox.TokenType.PLUS;
 import static io.github.maebli.lox.TokenType.RIGHT_BRACE;
 import static io.github.maebli.lox.TokenType.RIGHT_PARENTHESIS;
@@ -110,6 +111,7 @@ public class Scanner {
             while (Character.isDigit(peek()))
                 advance();
         }
+        addToken(NUMBER, Double.valueOf(source.substring(start, current)));
     }
 
     private char peekNext() {
