@@ -37,9 +37,17 @@ public class Lox {
         for (;;) {
             System.out.print("> ");
             String line = reader.readLine();
-            if (line == null)
-                break;
+            switch (line) {
+                case "exit", "exit()", "quite" -> System.exit(0);
+                case null -> {
+                    break;
+                }
+                default -> {
+                }
+            }
+
             run(line);
+
             if (hadError)
                 System.exit(EXIT_CODE_RUNNER_HAD_ERROR);
         }
