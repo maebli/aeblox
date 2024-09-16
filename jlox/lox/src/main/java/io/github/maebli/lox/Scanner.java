@@ -9,6 +9,7 @@ import static io.github.maebli.lox.TokenType.BANG;
 import static io.github.maebli.lox.TokenType.BANG_EQUAL;
 import static io.github.maebli.lox.TokenType.COMMA;
 import static io.github.maebli.lox.TokenType.DOT;
+import static io.github.maebli.lox.TokenType.EOF;
 import static io.github.maebli.lox.TokenType.GREATER;
 import static io.github.maebli.lox.TokenType.GREATER_EQUAL;
 import static io.github.maebli.lox.TokenType.IDENTIFIER;
@@ -39,48 +40,55 @@ public class Scanner {
 
     public List<Token> scanTokens() {
         while (!isAtEnd()) {
-            char c = advance();
-            switch (c) {
-                case '(' -> addToken(LEFT_PARENTHESIS);
-                case ')' -> addToken(RIGHT_PARENTHESIS);
-                case '{' -> addToken(LEFT_BRACE);
-                case '}' -> addToken(RIGHT_BRACE);
-                case ',' -> addToken(COMMA);
-                case '.' -> addToken(DOT);
-                case '-' -> addToken(MINUS);
-                case '+' -> addToken(PLUS);
-                case ';' -> addToken(SEMICOLON);
-                case '*' -> addToken(STAR);
-                case '!' -> addToken(match('=') ? BANG_EQUAL : BANG);
-                case '=' -> addToken(match('=') ? BANG_EQUAL : BANG);
-                case '<' -> addToken(match('=') ? LESS : LESS_EQUAL);
-                case '>' -> addToken(match('=') ? GREATER : GREATER_EQUAL);
-                case '/' -> {
-                    if (match('/')) {
-                        while (peek() != '\n' && !isAtEnd())
-                            advance();
-                    } else {
-                        addToken(SLASH);
-                    }
+            start = current;
+            scanToken();
+        }
+        tokens.add(new Token(EOF, "", null, line));
+        return tokens;
+    }
+
+    private void scanToken() {
+        char c = advance();
+        switch (c) {
+            case '(' -> addToken(LEFT_PARENTHESIS);
+            case ')' -> addToken(RIGHT_PARENTHESIS);
+            case '{' -> addToken(LEFT_BRACE);
+            case '}' -> addToken(RIGHT_BRACE);
+            case ',' -> addToken(COMMA);
+            case '.' -> addToken(DOT);
+            case '-' -> addToken(MINUS);
+            case '+' -> addToken(PLUS);
+            case ';' -> addToken(SEMICOLON);
+            case '*' -> addToken(STAR);
+            case '!' -> addToken(match('=') ? BANG_EQUAL : BANG);
+            case '=' -> addToken(match('=') ? BANG_EQUAL : BANG);
+            case '<' -> addToken(match('=') ? LESS : LESS_EQUAL);
+            case '>' -> addToken(match('=') ? GREATER : GREATER_EQUAL);
+            case '/' -> {
+                if (match('/')) {
+                    while (peek() != '\n' && !isAtEnd())
+                        advance();
+                } else {
+                    addToken(SLASH);
                 }
-                case ' ', '\r', '\t' -> {
-                    // ignore
-                }
-                case '\n' -> line++;
-                case '"' -> string();
-                default -> {
-                    if (Character.isDigit(c)) {
-                        number();
-                    } else if (Character.isAlphabetic(c)) {
-                        identifier();
-                    } else {
-                        Lox.error(line, "Illegal character found in source: '" + c + "'");
-                    }
+            }
+            case ' ', '\r', '\t' -> {
+                // ignore
+            }
+            case '\n' -> line++;
+            case '"' -> string();
+            default -> {
+                if (Character.isDigit(c)) {
+                    number();
+                } else if (Character.isAlphabetic(c)) {
+                    identifier();
+                } else {
+                    Lox.error(line, "Illegal character found in source: '" + c + "'");
                 }
             }
         }
-        return tokens;
-    }
+
+    };
 
     private void identifier() {
         while (Character.isLetterOrDigit(peek()))
@@ -115,6 +123,7 @@ public class Scanner {
         while (peek() != '"' && !isAtEnd()) {
             if (peek() == '\n')
                 line++;
+            advance();
         }
 
         if (isAtEnd()) {
