@@ -69,6 +69,22 @@ public class Scanner {
                 if (match('/')) {
                     while (peek() != '\n' && !isAtEnd())
                         advance();
+                } else if (match('*')) {
+                    int opened = 1;
+                    while (opened != 0 && !isAtEnd()) {
+                        if (peek() == '*' && peekNext() == '/') {
+                            opened--;
+                        } else if (peek() == '/' && peekNext() == '*') {
+                            opened++;
+                        }
+                        advance();
+                    }
+                    if (opened != 0) {
+                        Lox.error(line, "C-Style comments opened, but never closed.");
+                    } else {
+                        advance();
+                    }
+
                 } else {
                     addToken(SLASH);
                 }
