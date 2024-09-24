@@ -1,6 +1,16 @@
 package io.github.maebli.lox;
 
 abstract class Expr {
+  interface Visitor<R> {
+    R visitBinaryExpr(Binary expr);
+
+    R visitGroupingExpr(Grouping expr);
+
+    R visitLiteralExpr(Literal expr);
+
+    R visitUnaryExpr(Unary expr);
+  }
+
   static class Binary extends Expr {
     Binary(Expr left, Token operator, Expr right) {
       this.left = left;
@@ -11,6 +21,11 @@ abstract class Expr {
     final Expr left;
     final Token operator;
     final Expr right;
+
+    @Override
+    <R> R accept(Visitor<R> vistor) {
+      return vistor.visitBinaryExpr(this);
+    }
   }
 
   static class Grouping extends Expr {
@@ -19,6 +34,11 @@ abstract class Expr {
     }
 
     final Expr expression;
+
+    @Override
+    <R> R accept(Visitor<R> vistor) {
+      return vistor.visitGroupingExpr(this);
+    }
   }
 
   static class Literal extends Expr {
@@ -27,6 +47,11 @@ abstract class Expr {
     }
 
     final Object value;
+
+    @Override
+    <R> R accept(Visitor<R> vistor) {
+      return vistor.visitLiteralExpr(this);
+    }
   }
 
   static class Unary extends Expr {
@@ -37,5 +62,12 @@ abstract class Expr {
 
     final Token operator;
     final Expr right;
+
+    @Override
+    <R> R accept(Visitor<R> vistor) {
+      return vistor.visitUnaryExpr(this);
+    }
   }
+
+  abstract <R> R accept(Visitor<R> vistor);
 }
